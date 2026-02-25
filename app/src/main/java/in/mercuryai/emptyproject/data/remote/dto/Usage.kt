@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.data.remote.dto
+package `in`.mercuryai.emptyproject.data.remote.dto
 
 data class Usage(
     val completion_tokens: Int,

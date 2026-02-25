@@ -1,14 +1,9 @@
-package `in`.mercuryai.chat.data.remote
+package `in`.mercuryai.emptyproject.data.remote
 
-import `in`.mercuryai.chat.data.`object`.Constant.IMAGE_KEY
-import `in`.mercuryai.chat.domain.model.ImageGenerateRequest
-import `in`.mercuryai.chat.domain.model.OpenRouterChatRequest
-import `in`.mercuryai.chat.domain.model.OpenRouterChatResponse
-import `in`.mercuryai.chat.domain.model.OpenRouterImageRequest
-import `in`.mercuryai.chat.domain.model.OpenRouterImageRequest1
-import `in`.mercuryai.chat.domain.model.OpenRouterImageResponse
+import `in`.mercuryai.emptyproject.domain.model.ImageGenerateRequest
+import `in`.mercuryai.emptyproject.domain.model.OpenRouterChatResponse
+import `in`.mercuryai.emptyproject.domain.model.OpenRouterImageRequest1
 import okhttp3.ResponseBody
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST

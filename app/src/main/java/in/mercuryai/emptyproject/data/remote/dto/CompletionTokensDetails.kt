@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.data.remote.dto
+package `in`.mercuryai.emptyproject.data.remote.dto
 
 data class CompletionTokensDetails(
     val accepted_prediction_tokens: Int,

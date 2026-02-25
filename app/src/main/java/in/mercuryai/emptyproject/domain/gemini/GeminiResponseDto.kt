@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.domain.gemini
+package `in`.mercuryai.emptyproject.domain.gemini
 
 import kotlinx.serialization.Serializable
 

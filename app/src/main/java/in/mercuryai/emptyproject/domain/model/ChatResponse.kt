@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.domain.model
+package `in`.mercuryai.emptyproject.domain.model
 
 data class ChatResponse(
     val model: String = "gpt-4o-mini",

@@ -1,6 +1,4 @@
-package `in`.mercuryai.chat.domain.model
-
-import android.net.Uri
+package `in`.mercuryai.emptyproject.domain.model
 
 //data class ChatMessage(
 //    val role: String, // "user" | "assistant"

@@ -1,9 +1,18 @@
-package `in`.mercuryai.chat.domain.gemini
+package `in`.mercuryai.emptyproject.domain.gemini
 
 data class ImagenRequest(
-    val instances: List<ImagenInstance>,
-    val parameters: ImagenParameters = ImagenParameters()
+    val instances: List<Instance>,
+    val parameters: Parameters? = null
 )
+
+data class Instance(
+    val prompt: String
+)
+
+data class Parameters(
+    val sampleCount: Int = 1
+)
+
 
 data class ImagenInstance(
     val prompt: String

@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.di
+package `in`.mercuryai.emptyproject.di
 
 import android.content.Context
 import dagger.Module
@@ -7,16 +7,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import `in`.mercuryai.chat.data.`object`.Constant
-import `in`.mercuryai.chat.data.remote.ImageApi
-import `in`.mercuryai.chat.data.remote.OpenAiApi
-import `in`.mercuryai.chat.data.repository.AiRepositoryImpl
+import `in`.mercuryai.emptyproject.data.remote.OpenAiApi
+import `in`.mercuryai.emptyproject.data.repository.AiRepositoryImpl
 import `in`.mercuryai.chat.data.repository.AuthRepositoryImpl
-import `in`.mercuryai.chat.data.repository.ChatRepositoryImpl
-import `in`.mercuryai.chat.data.repository.NetworkConnectivityObserverImpl
-import `in`.mercuryai.chat.domain.repository.AiRepository
-import `in`.mercuryai.chat.domain.repository.AuthRepository
-import `in`.mercuryai.chat.domain.repository.ChatRepository
-import `in`.mercuryai.chat.domain.repository.NetworkConnectivityObserver
+import `in`.mercuryai.emptyproject.data.repository.ChatRepositoryImpl
+import `in`.mercuryai.emptyproject.data.repository.NetworkConnectivityObserverImpl
+import `in`.mercuryai.emptyproject.domain.repository.AiRepository
+import `in`.mercuryai.emptyproject.domain.repository.AuthRepository
+import `in`.mercuryai.emptyproject.domain.repository.ChatRepository
+import `in`.mercuryai.emptyproject.domain.repository.NetworkConnectivityObserver
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
@@ -25,8 +24,10 @@ import io.github.jan.supabase.realtime.Realtime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -51,15 +52,29 @@ object AppModule {
         impl: AuthRepositoryImpl
     ): AuthRepository = impl
 
-   // /models/gemini-1.5-flash:generateContent
+
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(120, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
+
+
+    // /models/gemini-1.5-flash:generateContent
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://generativelanguage.googleapis.com/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
 
     @Provides
     @Singleton

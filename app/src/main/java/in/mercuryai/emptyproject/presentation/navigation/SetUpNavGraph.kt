@@ -1,11 +1,13 @@
-package `in`.mercuryai.chat.presentation.navigation
+package `in`.mercuryai.emptyproject.presentation.navigation
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,20 +29,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import `in`.mercuryai.chat.presentation.auth.AuthScreen1
-import `in`.mercuryai.chat.presentation.auth.AuthState
-import `in`.mercuryai.chat.presentation.auth.AuthViewModel
-import `in`.mercuryai.chat.presentation.auth.SignInScreen
-import `in`.mercuryai.chat.presentation.component.HomeDrawer
-import `in`.mercuryai.chat.presentation.home.ChatScreen
-import `in`.mercuryai.chat.presentation.home.ChatViewModel
-import `in`.mercuryai.chat.presentation.home.ImageViewModel
+import `in`.mercuryai.emptyproject.presentation.auth.AuthState
+import `in`.mercuryai.emptyproject.presentation.auth.AuthViewModel
+
+import `in`.mercuryai.emptyproject.presentation.home.ChatViewModel
+
+import `in`.mercuryai.chat.presentation.navigation.Routes
 import `in`.mercuryai.emptyproject.presentation.util.TextToSpeechHelper
 import `in`.mercuryai.chat.presentation.util.VoiceToTextHelper
+import `in`.mercuryai.emptyproject.presentation.auth.AuthScreen2
+import `in`.mercuryai.emptyproject.presentation.auth.SignInScreen
+import `in`.mercuryai.emptyproject.presentation.component.HomeDrawer
+import `in`.mercuryai.emptyproject.presentation.home.ChatScreen
 import kotlinx.coroutines.launch
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun SetUpNavGraph(
+fun SetUpNavGraph3(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     snackbarHostState: SnackbarHostState
@@ -94,7 +99,7 @@ fun SetUpNavGraph(
 
 
 
-            AuthScreen1(
+            AuthScreen2(
 
                 modifier = modifier,
                 navigateToHomeScreen = {
@@ -128,7 +133,7 @@ fun SetUpNavGraph(
             val context = LocalContext.current
             val authViewModel = hiltViewModel<AuthViewModel>()
             val chatViewModel = hiltViewModel<ChatViewModel>()
-            val imageViewModel = hiltViewModel<ImageViewModel>()
+      //      val imageViewModel = hiltViewModel<ImageViewModel>()
 
             val messages by chatViewModel.messages1.collectAsState()
 
@@ -150,6 +155,7 @@ fun SetUpNavGraph(
 
 
 
+            val selectedModel by chatViewModel.selectedModel.collectAsStateWithLifecycle()
 
 
 
@@ -214,10 +220,10 @@ fun SetUpNavGraph(
                                 if (prompt.isNotEmpty()) {
                                     Log.d("TAG", "HomeScreen: $prompt")
 
-                                    imageViewModel.generateImage(
+                                  //  imageViewModel.generateImage(
 //                                        conversationId = chatViewModel.currentConversationId() ?: return@ChatScreen,
 //                                        prompt = prompt
-                                    )
+                                    //)
                                 }
                             }
 
@@ -267,8 +273,9 @@ fun SetUpNavGraph(
                     onRegenerate = {
                         chatViewModel.sendMessage6(it.content, null, context)
                     },
+                    selectedModel=selectedModel,
                     onModelChange = {
-
+                        chatViewModel.changeModel(it)
                     },
                     onStartListening = { onResult ->
                         VoiceToTextHelper(

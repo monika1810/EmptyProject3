@@ -1,7 +1,7 @@
-package `in`.mercuryai.chat.domain.repository
+package `in`.mercuryai.emptyproject.domain.repository
 
 import android.content.Context
-import `in`.mercuryai.chat.presentation.auth.AuthResponse
+import `in`.mercuryai.emptyproject.presentation.auth.AuthResponse
 import io.github.jan.supabase.gotrue.user.UserSession
 import kotlinx.coroutines.flow.Flow
 

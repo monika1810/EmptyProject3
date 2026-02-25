@@ -1,5 +1,6 @@
-package `in`.mercuryai.chat.presentation.home
+package `in`.mercuryai.emptyproject.presentation.home
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +12,7 @@ import kotlinx.coroutines.launch
 
 data class ChatMessage1(
     val text: String? = null,
-    val image: android.graphics.Bitmap? = null,
+    val image: Bitmap? = null,
     val isUser: Boolean,
     val isImageResponse: Boolean = false
 )

@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.presentation.home
+package `in`.mercuryai.emptyproject.presentation.home
 
 import android.net.Uri
 import android.util.Log
@@ -10,39 +10,29 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,16 +44,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.ChatMessageUi
-import `in`.mercuryai.chat.presentation.component.MercuryAITopAppBar
-import `in`.mercuryai.chat.presentation.home.components.ChatInputBar
-import `in`.mercuryai.chat.presentation.home.components.MessageList
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageUi
 import `in`.mercuryai.chat.presentation.util.SnackbarEvent
-import `in`.mercuryai.chat.presentation.util.Surface
+import `in`.mercuryai.emptyproject.presentation.component.MercuryAITopAppBar
+import `in`.mercuryai.emptyproject.presentation.home.components.ChatInputBar
+import `in`.mercuryai.emptyproject.presentation.home.components.MessageList2
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 
@@ -80,20 +67,22 @@ fun ChatScreen(
     onCopy: (ChatMessageMain) -> Unit,
     onShare: (ChatMessageMain) -> Unit,
     onRegenerate: (ChatMessageMain) -> Unit,
-    onModelChange: (ChatMessageMain) -> Unit,
+    selectedModel: String,
+    onModelChange: (String) -> Unit,
     onStartListening: ((String) -> Unit) -> Unit,
     onListen: (ChatMessageMain) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val listState = rememberLazyListState()
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1 = true) {
 
         Log.d("TAG","UI collecting on: ${this.coroutineContext[CoroutineDispatcher]}")
 
-        snackbarEvent.collect{
+        snackbarEvent.collect {  event->
+            Log.d("Snackbar",event.message)
             snackbarHostState.showSnackbar(
-                message = it.message,
-                duration = it.duration
+                message = event.message,
+                duration = event.duration
             )
         }
     }
@@ -116,10 +105,50 @@ fun ChatScreen(
     Scaffold(
         containerColor = Color.White,
         topBar = {
-            MercuryAITopAppBar(
-                modifier = Modifier,
-                onSearchClick = onSearchClick,
-            )
+            var expanded by remember { mutableStateOf(false) }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+
+                Box(
+                    modifier = Modifier.background(Color.Gray)
+                ) {
+                    TextButton(onClick = { expanded = true }) {
+                        Text(selectedModel)
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+
+                        val models = listOf(
+                            "gemma-3-1b-it",
+                            "gemini-flash-latest",
+                            "gemini-flash-lite",
+                            "gemini-flash",
+                            "claude-3-sonnet"
+                        )
+
+                        models.forEach { model ->
+                            DropdownMenuItem(
+                                text = { Text(model) },
+                                onClick = {
+                                    expanded = false
+                                    onModelChange(model)
+                                }
+                            )
+                        }
+                    }
+                }
+                MercuryAITopAppBar(
+                    modifier = Modifier.weight(1f),
+                    onSearchClick = onSearchClick,
+                )
+            }
+
         }
 
     ) { paddingValues ->
@@ -134,11 +163,12 @@ fun ChatScreen(
                 .background(Color.Gray)
         ) {
 
-            MessageList(
+            MessageList2(
                 messages = messages,
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f),
+                selectedModel=selectedModel,
                 listState = listState,
                 onLike = onLike,
                 onDislike = onDislike,
@@ -202,56 +232,4 @@ fun ChatScreen(
         }
     }
 
-
-
-
-
-
-}
-
-@Composable
-fun ChatBubble1(message: ChatMessage1) {
-    val alignment = if (message.isUser) Arrangement.End else Arrangement.Start
-    val color = if (message.isUser) Color(0xFFD1E7FF) else Color(0xFFF0F0F0)
-
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        horizontalArrangement = alignment
-    ) {
-        Surface(
-            color = color,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.widthIn(max = 280.dp)
-        ) {
-            message.text?.let { Text(text = it, modifier = Modifier.padding(12.dp)) }
-        }
-    }
-}
-
-@Composable
-fun ChatBubble(message: ChatMessage1) {
-    val alignment = if (message.isUser) Alignment.End else Alignment.Start
-
-    Column(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalAlignment = alignment) {
-        if (message.isImageResponse && message.image != null) {
-            // Display Generated Image
-            Image(
-                bitmap = message.image.asImageBitmap(),
-                contentDescription = "Generated AI Image",
-                modifier = Modifier.size(250.dp).clip(RoundedCornerShape(12.dp))
-            )
-        } else {
-            // Display Text
-            Surface(
-                color = if (message.isUser) Color(0xFF007AFF) else Color(0xFFE9E9EB),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = message.text ?: "",
-                    modifier = Modifier.padding(12.dp),
-                    color = if (message.isUser) Color.White else Color.Black
-                )
-            }
-        }
-    }
 }

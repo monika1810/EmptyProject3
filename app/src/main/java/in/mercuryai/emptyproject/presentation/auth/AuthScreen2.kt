@@ -1,10 +1,9 @@
-package `in`.mercuryai.chat.presentation.auth
+package `in`.mercuryai.emptyproject.presentation.auth
 
 
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,14 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,16 +42,14 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import `in`.mercuryai.chat.data.`object`.Constant
 import `in`.mercuryai.chat.presentation.util.SnackbarEvent
-import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import java.nio.file.WatchEvent
 import java.security.MessageDigest
 import java.util.UUID
 
 @Composable
-fun AuthScreen1(
+fun AuthScreen2(
     modifier: Modifier = Modifier,
     navigateToHomeScreen: () -> Unit,
     navigateToSignInScreen: () -> Unit,
@@ -341,7 +336,7 @@ fun GoogleSignInButton(
 
     }
 
-    androidx.compose.material3.Button(
+    Button(
         onClick = onClick,
         modifier = modifier
     ) {

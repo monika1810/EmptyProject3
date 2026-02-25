@@ -1,53 +1,32 @@
-package `in`.mercuryai.chat.data.repository
+package `in`.mercuryai.emptyproject.data.repository
 
 import android.content.Context
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
-import com.google.ai.client.generativeai.type.Content
 import dagger.hilt.android.qualifiers.ApplicationContext
 import `in`.mercuryai.chat.data.`object`.Constant
-import `in`.mercuryai.chat.data.`object`.isImagePrompt
-import `in`.mercuryai.chat.data.`object`.saveBase64AndReturnUrl
+import `in`.mercuryai.chat.data.`object`.Constant.GEMINI_API_KEY
 import `in`.mercuryai.chat.data.`object`.toGeminiContents
-import `in`.mercuryai.chat.data.remote.ImageApi
-import `in`.mercuryai.chat.data.remote.OpenAiApi
-import `in`.mercuryai.chat.di.RetrofitModule.imageApi
-import `in`.mercuryai.chat.domain.gemini.GeminiContent
-import `in`.mercuryai.chat.domain.gemini.GeminiContent1
-import `in`.mercuryai.chat.domain.gemini.GeminiPart
-import `in`.mercuryai.chat.domain.gemini.GeminiRequest
-import `in`.mercuryai.chat.domain.gemini.GeminiResponse
-import `in`.mercuryai.chat.domain.gemini.GeminiVisionRequest
-import `in`.mercuryai.chat.domain.gemini.ImagenInstance
-import `in`.mercuryai.chat.domain.gemini.ImagenRequest
-import `in`.mercuryai.chat.domain.gemini.InlineImage
-import `in`.mercuryai.chat.domain.gemini.VisionContent
-import `in`.mercuryai.chat.domain.gemini.VisionPart
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ChatResponse
-import `in`.mercuryai.chat.domain.model.ContentBlock
-import `in`.mercuryai.chat.domain.model.GeminiImageContent
-import `in`.mercuryai.chat.domain.model.GeminiImagePart
-import `in`.mercuryai.chat.domain.model.GeminiImagePrompt
-import `in`.mercuryai.chat.domain.model.GeminiImageRequest
-import `in`.mercuryai.chat.domain.model.GeminiImageRequest1
-import `in`.mercuryai.chat.domain.model.ImageGenerateRequest
-import `in`.mercuryai.chat.domain.model.ImageGenerationRequest
-import `in`.mercuryai.chat.domain.model.ImageGenerationResult
-import `in`.mercuryai.chat.domain.model.ImagenModel
-import `in`.mercuryai.chat.domain.model.ImagenParameters
-import `in`.mercuryai.chat.domain.model.ImagenPredictRequest
-import `in`.mercuryai.chat.domain.model.Message
-import `in`.mercuryai.chat.domain.model.Message5
-import `in`.mercuryai.chat.domain.model.OpenRouterChatRequest
-import `in`.mercuryai.chat.domain.model.OpenRouterImageRequest
-import `in`.mercuryai.chat.domain.model.OpenRouterImageRequest1
-import `in`.mercuryai.chat.domain.repository.AiRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.currentCoroutineContext
-import retrofit2.http.Part
+import `in`.mercuryai.emptyproject.data.`object`.AiModel
+import `in`.mercuryai.emptyproject.data.remote.OpenAiApi
+import `in`.mercuryai.emptyproject.di.RetrofitModule.imageApi
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiContent
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiPart
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiRequest
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiVisionRequest
+import `in`.mercuryai.emptyproject.domain.gemini.ImagenRequest
+import `in`.mercuryai.emptyproject.domain.gemini.InlineImage
+import `in`.mercuryai.emptyproject.domain.gemini.Instance
+import `in`.mercuryai.emptyproject.domain.gemini.Parameters
+import `in`.mercuryai.emptyproject.domain.gemini.VisionContent
+import `in`.mercuryai.emptyproject.domain.gemini.VisionPart
+import `in`.mercuryai.emptyproject.domain.model.ChatMessage
+import `in`.mercuryai.emptyproject.domain.model.ChatResponse
+import `in`.mercuryai.emptyproject.domain.model.ContentBlock
+import `in`.mercuryai.emptyproject.domain.model.Message5
+import `in`.mercuryai.emptyproject.domain.model.OpenRouterImageRequest1
+import `in`.mercuryai.emptyproject.domain.repository.AiRepository
 import java.io.File
 import javax.inject.Inject
 
@@ -121,6 +100,7 @@ class AiRepositoryImpl @Inject constructor(
 
         val lastImageMessage = messages.lastOrNull { it.imageUrl != null }
 
+
         return if (lastImageMessage?.imageUrl != null) {
             analyzeImageWithQuestion(
                 imagePath = lastImageMessage.imageUrl,
@@ -185,52 +165,107 @@ class AiRepositoryImpl @Inject constructor(
         return text
     }
 
-    private fun extractGeminiText(response: GeminiResponse): String {
-        val rawText = response.candidates
-            .firstOrNull()
-            ?.content
-            ?.parts
-            ?.joinToString("") { it.text.orEmpty() }
-            .orEmpty()
+//    private fun extractGeminiText(response: GeminiResponse): String {
+//        val rawText = response.candidates
+//            .firstOrNull()
+//            ?.content
+//            ?.parts
+//            ?.joinToString("") { it.text.orEmpty() }
+//            .orEmpty()
+//
+//        return sanitizeGeminiText(rawText)
+//            ?: throw IllegalStateException("Invalid Gemini response")
+//    }
 
-        return sanitizeGeminiText(rawText)
-            ?: throw IllegalStateException("Invalid Gemini response")
-    }
 
+//    private suspend fun generateText1(messages: List<ChatMessage>): ChatMessage {
+//
+//        repeat(2) { attempt ->
+//            val request = GeminiRequest(
+//                contents = messages
+//                    .takeLast(10)
+//                    .toGeminiContents()
+//            )
+//
+//            val response = api.generateContent(
+//                apiKey = GEMINI_API_KEY,
+//                body = request
+//            )
+//
+//            Log.d("GEMINI_TEXT", response.toString())
+//
+//            try {
+//                val text = extractGeminiText(response)
+//                return ChatMessage(
+//                    role = "assistant",
+//                    content = text,
+//                )
+//            } catch (e: Exception) {
+//                Log.w("GEMINI_RETRY", "Attempt $attempt failed")
+//            }
+//        }
+//
+//        // 🚨 FINAL FALLBACK (never meta, never empty)
+//        return ChatMessage(
+//            role = "assistant",
+//            content = "Sorry, I couldn’t generate a proper response. Please try again."
+//        )
+//    }
 
-    private suspend fun generateText1(messages: List<ChatMessage>): ChatMessage {
+    override suspend fun sendMessage(
+        userId: String,
+        messages: List<ChatMessage>,
+        selectedModel: String
+    ): ChatMessage {
 
-        repeat(2) { attempt ->
-            val request = GeminiRequest(
-                contents = messages
-                    .takeLast(10)
-                    .toGeminiContents()
-            )
+        val model = AiModel.from(selectedModel)
 
-            val response = api.generateContent(
-                apiKey = Constant.GEMINI_API_KEY,
-                body = request
-            )
+        Log.d("Model","Selected Model : ${model.modelName}")
 
-            Log.d("GEMINI_TEXT", response.toString())
+        val request = GeminiRequest(
+            contents = messages
+                .takeLast(10)
+                .toGeminiContents()
+        )
 
-            try {
-                val text = extractGeminiText(response)
-                return ChatMessage(
-                    role = "assistant",
-                    content = text,
-                )
-            } catch (e: Exception) {
-                Log.w("GEMINI_RETRY", "Attempt $attempt failed")
-            }
+        val response = when (model) {
+
+            AiModel.Gemma3_1B ->
+                api.generateGemma(GEMINI_API_KEY, request)
+
+            AiModel.GeminiFlash ->
+                api.generateContent9(GEMINI_API_KEY, request)
+
+            AiModel.GeminiFlashLite ->
+                api.generateContentFlashLite(GEMINI_API_KEY, request)
+
+            AiModel.GeminiFlashLatest ->
+                api.generateContent(GEMINI_API_KEY, request)
         }
 
-        // 🚨 FINAL FALLBACK (never meta, never empty)
+        // 🔥 Token usage
+        val tokensUsed = response.usageMetadata?.totalTokenCount ?: 0
+        Log.d("TOKENS_USED", "$selectedModel -> $tokensUsed")
+
+        // 🔥 Extract response safely
+        val text = response.candidates
+            ?.firstOrNull()
+            ?.content
+            ?.parts
+            ?.firstOrNull()
+            ?.text
+            ?: "No response"
+
         return ChatMessage(
             role = "assistant",
-            content = "Sorry, I couldn’t generate a proper response. Please try again."
+            content = text,
+            modelName = selectedModel
         )
     }
+
+
+
+
 
     private suspend fun generateText(messages: List<ChatMessage>): ChatMessage {
 
@@ -240,16 +275,62 @@ class AiRepositoryImpl @Inject constructor(
                 .toGeminiContents()
         )
 
+        Log.d("Requets",request.toString())
+
         val response = api.generateContent(
-            apiKey = Constant.GEMINI_API_KEY,
+            apiKey = GEMINI_API_KEY,
             body = request
         )
+
+        val gemma_response = api.generateGemma(
+            apiKey = GEMINI_API_KEY,
+            body = GeminiRequest(
+                contents = listOf(
+                    GeminiContent(
+                        parts = listOf(
+                            GeminiPart(
+                                text = "How are you"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        Log.d("GEMMA_RAW_RESPONSE", gemma_response.toString())
+
+        val texter = response.candidates
+            ?.firstOrNull()
+            ?.content
+            ?.parts
+            ?.firstOrNull()
+            ?.text
+            ?: "No response from gemma"
+
+        Log.d("GEMMA_TEXT", texter)
+
+        val request2 = ImagenRequest(
+            instances = listOf(
+                Instance(prompt = "A futuristic cyberpunk city at night")
+            ),
+            parameters = Parameters(sampleCount = 1)
+        )
+
+
+
+        val response1 = api.listModels(GEMINI_API_KEY)
+
+        response1.models.forEach {
+            Log.d("MODEL", "${it.name} -> ${it.supportedGenerationMethods}")
+        }
+
+
 
         Log.d("GEMINI_TEXT", response.toString())
 
         val text = response
             .candidates
-            .firstOrNull()
+            ?.firstOrNull()
             ?.content
             ?.parts
             ?.firstOrNull()
@@ -380,13 +461,13 @@ class AiRepositoryImpl @Inject constructor(
 
         // ✅ Call Gemini
         val response = api.generateContent(
-            apiKey = Constant.GEMINI_API_KEY,
+            apiKey = GEMINI_API_KEY,
             body = request
         )
 
         // ✅ Extract response safely
         val answer = response.candidates
-            .firstOrNull()
+            ?.firstOrNull()
             ?.content
             ?.parts
             ?.firstOrNull()
@@ -506,27 +587,28 @@ class AiRepositoryImpl @Inject constructor(
 //            .text
 //    }
 
-    override suspend fun sendMessage(prompt: String): String {
-
-        val request = GeminiRequest(
-            contents = listOf(
-                GeminiContent(
-                    parts = listOf(
-                        GeminiPart(text = prompt)
-                    )
-                )
-            )
-        )
-
-        val response = api.generateContent(
-            apiKey = Constant.GEMINI_API_KEY,
-            body = request
-        )
-
-        Log.d("GEMINI_RAW", response.toString())
-
-        return response.candidates[0].content.parts[0].text
-    }
+//    override suspend fun sendMessage(prompt: String): String {
+//
+////        val request = GeminiRequest(
+////            contents = listOf(
+////                GeminiContent(
+////                    parts = listOf(
+////                        GeminiPart(text = prompt)
+////                    )
+////                )
+////            )
+////        )
+////
+////        val response = api.generateContent(
+////            apiKey = GEMINI_API_KEY,
+////            body = request
+////        )
+////
+////        Log.d("GEMINI_RAW", response.toString())
+////
+////        return response.candidates[0].content.parts[0].text
+//        return ""
+//    }
 
 
     fun saveBytesAndReturnUrl(bytes: ByteArray,context: Context): String {

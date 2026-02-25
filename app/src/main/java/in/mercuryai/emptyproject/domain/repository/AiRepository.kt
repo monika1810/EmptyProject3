@@ -1,11 +1,14 @@
-package `in`.mercuryai.chat.domain.repository
+package `in`.mercuryai.emptyproject.domain.repository
 
-import android.net.Uri
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ImageGenerationRequest
-import `in`.mercuryai.chat.domain.model.ImageGenerationResult
+import `in`.mercuryai.emptyproject.domain.model.ChatMessage
 
 interface AiRepository {
+
+    suspend fun sendMessage(
+        userId: String,
+        messages: List<ChatMessage>,
+        selectedModel: String
+    ): ChatMessage
 
 
     suspend fun generateImage(prompt: String): String
@@ -23,8 +26,10 @@ interface AiRepository {
 
    // suspend fun generateImage(prompt: String): ChatMessage
 
-    suspend fun send(messages: List<ChatMessage>): ChatMessage
-    suspend fun sendMessage(prompt: String): String
+    suspend fun send(
+        messages: List<ChatMessage>
+    ): ChatMessage
+//    suspend fun sendMessage(prompt: String): String
 
     suspend fun sendMessage(messages: List<ChatMessage>): String
 

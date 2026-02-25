@@ -1,20 +1,23 @@
-package `in`.mercuryai.chat.presentation.home
+package `in`.mercuryai.emptyproject.presentation.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresExtension
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import `in`.mercuryai.chat.data.`object`.toUiWrapper
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.Conversation
-import `in`.mercuryai.chat.domain.model.Sender
-import `in`.mercuryai.chat.domain.repository.AiRepository
-import `in`.mercuryai.chat.domain.repository.AuthRepository
-import `in`.mercuryai.chat.domain.repository.ChatRepository
+import `in`.mercuryai.emptyproject.domain.model.ChatMessage
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.Conversation
+import `in`.mercuryai.emptyproject.domain.model.Sender
+import `in`.mercuryai.emptyproject.domain.repository.AiRepository
+import `in`.mercuryai.emptyproject.domain.repository.AuthRepository
+import `in`.mercuryai.emptyproject.domain.repository.ChatRepository
 import `in`.mercuryai.chat.presentation.util.SnackbarEvent
 import `in`.mercuryai.emptyproject.presentation.util.TextToSpeechHelper
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +31,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 
@@ -40,12 +44,13 @@ fun ChatMessageMain.toAiMessage(): ChatMessage {
 
 fun List<ChatMessageMain>.toAiMessages(): List<ChatMessage> =
     map { it.toAiMessage() }
+
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val repository: AiRepository,
     private val chatRepository: ChatRepository,
     private val authRepository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
     private val _conversationId = MutableStateFlow<String?>(null)
     val messages1: StateFlow<List<ChatMessageMain>> =
@@ -85,13 +90,20 @@ class ChatViewModel @Inject constructor(
             }
             .stateIn(
                 viewModelScope,
-                SharingStarted.WhileSubscribed(5_000),
+                SharingStarted.WhileSubscribed(5000),
                 emptyList()
             )
 
+    private val _selectedModel = MutableStateFlow("gemma-3-1b-it")
+    val selectedModel: StateFlow<String> = _selectedModel
+
+    fun changeModel(model: String) {
+        _selectedModel.value = model
+    }
+
+
     private val _snackbarEvent = Channel<SnackbarEvent>()
     val snackbarEvent = _snackbarEvent.receiveAsFlow()
-
 
 
     init {
@@ -143,6 +155,8 @@ class ChatViewModel @Inject constructor(
 
     fun currentConversationId(): String? = _conversationId.value
 
+    @SuppressLint("SuspiciousIndentation")
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun sendMessage6(
         text: String,
         imageUri: Uri?,
@@ -154,17 +168,28 @@ class ChatViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
+
+                val userId = authRepository.currentUserId()
+                val model = selectedModel.value
+
                 // 1️⃣ Prepare image (if any)
                 val imagePath = imageUri?.let {
-                    chatRepository.copyUriToLocalFile(it,context = context) // ⬅️ VERY IMPORTANT
+                    chatRepository.copyUriToLocalFile(it, context = context) // ⬅️ VERY IMPORTANT
                 }
 
+                Log.d("MODEL_SELECTED", model)
+
+
+                Log.d("ImagePath","$imagePath")
+
                 // 1️⃣ Save USER message (text only)
-                chatRepository.sendUserMessage(
+              val userMessage =  chatRepository.sendUserMessage(
                     conversationId = conversationId,
                     text = text.ifBlank { "📷 Image" },
-                    imageUrl= imagePath
+                    imageUrl = imagePath
                 )
+
+                Log.d("Send","user:${userMessage}")
 
                 val aiReply = if (imagePath != null) {
                     // 🔥 DIRECT vision call (no history scan)
@@ -176,38 +201,51 @@ class ChatViewModel @Inject constructor(
                     val history = messages1.value.map {
                         ChatMessage(
                             role = if (it.sender == Sender.USER) "user" else "assistant",
-                            content = it.content
+                            content = it.content,
+                            modelName = model
                         )
-                    } + ChatMessage(role = "user", content = text)
+                    } + ChatMessage(role = "user", content = text, modelName = model)
 
-                    repository.send(history)
+                    repository.sendMessage(
+                        userId = userId,
+                        messages = history,
+                        selectedModel = model
+                    )
                 }
+
+                Log.d("Send","Ai : ${aiReply}")
 
                 // 2️⃣ Save AI reply
                 chatRepository.saveAiMessage(
                     conversationId = conversationId,
-                    text = aiReply.content ?: "No response"
+                    text = aiReply.content ?: "No response",
+                    imageUrl = aiReply.imageUrl
                 )
 
                 // 🔊 SPEAK AI RESPONSE
-               ttsHelper?.speak(aiReply.content ?: "")
+                ttsHelper?.speak(aiReply.content ?: "")
 
-            } catch (e: Exception) {
-                Log.e("SITE", "sendMessage error", e)
-                _snackbarEvent.send(
-                    SnackbarEvent(e.message ?: "Message failed")
+            } catch (e: HttpException) {
+                Log.e(
+                    "API", "Code: ${e.code()}"
                 )
+                Log.e("API", "Error: ${e.response()?.errorBody()?.string()}")
+            } catch(e: Exception) {
+                    Log.e("SITE", "sendMessage error: ${e.message}", e)
+
+                    _snackbarEvent.send(
+                        SnackbarEvent(e.message ?: "Message failed")
+                    )
+                }
             }
         }
-    }
 
 
-    fun initTts(context: Context) {
-        if (ttsHelper == null) {
-            ttsHelper = TextToSpeechHelper(context)
+        fun initTts(context: Context) {
+            if (ttsHelper == null) {
+                ttsHelper = TextToSpeechHelper(context)
+            }
         }
-    }
-
 
 
 //    fun sendMessage5(text: String,imageUri: Uri?) {
@@ -292,91 +330,88 @@ class ChatViewModel @Inject constructor(
 //        }
 //    }
 
-    fun likeMessage(message: ChatMessageMain) {
-        viewModelScope.launch {
-            Log.d("SITE", "Like message: $message")
-            chatRepository.updateMessageLike(
-                messageId = message.id,
-                liked = true
-            )
-        }
-    }
-
-    fun dislikeMessage(message: ChatMessageMain) {
-
-        viewModelScope.launch {
-            Log.d("SITE", "Dislike message: $message")
-            chatRepository.updateMessageLike(
-                messageId = message.id,
-                liked = false
-            )
-        }
-    }
-
-
-    private fun generateTitle(text: String): String {
-        return text
-            .replace(Regex("[^A-Za-z0-9 ]"), "")
-            .trim()
-            .split(" ")
-            .take(5)
-            .joinToString(" ")
-            .replaceFirstChar { it.uppercase() }
-    }
-
-    fun updateConversationTitleManually(
-        conversationId: String,
-        newTitle: String
-    ) {
-        if (newTitle.isBlank()) return
-
-        viewModelScope.launch {
-            try {
-                chatRepository.updateConversationTitle(
-                    conversationId = conversationId,
-                    title = newTitle
-                )
-
-                // Prevent auto-title overriding later
-                titledConversations.add(conversationId)
-
-                Log.d("SITE", "Title manually updated: $newTitle")
-
-            } catch (e: Exception) {
-                Log.e("SITE", "Title update failed", e)
-                _snackbarEvent.send(
-                    SnackbarEvent("Failed to update title")
+        fun likeMessage(message: ChatMessageMain) {
+            viewModelScope.launch {
+                Log.d("SITE", "Like message: $message")
+                chatRepository.updateMessageLike(
+                    messageId = message.id,
+                    liked = true
                 )
             }
         }
-    }
 
-    fun deleteConversation(conversationId: String) {
-        viewModelScope.launch {
-            try {
-                chatRepository.deleteConversation(conversationId)
+        fun dislikeMessage(message: ChatMessageMain) {
 
-                titledConversations.remove(conversationId)
+            viewModelScope.launch {
+                Log.d("SITE", "Dislike message: $message")
+                chatRepository.updateMessageLike(
+                    messageId = message.id,
+                    liked = false
+                )
+            }
+        }
 
-                // If deleted conversation is currently open
-                if (_conversationId.value == conversationId) {
-                    _conversationId.value = null
-                    createOrLoadConversation()
+
+        private fun generateTitle(text: String): String {
+            return text
+                .replace(Regex("[^A-Za-z0-9 ]"), "")
+                .trim()
+                .split(" ")
+                .take(5)
+                .joinToString(" ")
+                .replaceFirstChar { it.uppercase() }
+        }
+
+        fun updateConversationTitleManually(
+            conversationId: String,
+            newTitle: String
+        ) {
+            if (newTitle.isBlank()) return
+
+            viewModelScope.launch {
+                try {
+                    chatRepository.updateConversationTitle(
+                        conversationId = conversationId,
+                        title = newTitle
+                    )
+
+                    // Prevent auto-title overriding later
+                    titledConversations.add(conversationId)
+
+                    Log.d("SITE", "Title manually updated: $newTitle")
+
+                } catch (e: Exception) {
+                    Log.e("SITE", "Title update failed", e)
+                    _snackbarEvent.send(
+                        SnackbarEvent("Failed to update title")
+                    )
                 }
-
-                Log.d("SITE", "Conversation deleted: $conversationId")
-
-            } catch (e: Exception) {
-                Log.e("SITE", "Delete failed", e)
-                _snackbarEvent.send(
-                    SnackbarEvent("Failed to delete conversation")
-                )
             }
         }
+
+        fun deleteConversation(conversationId: String) {
+            viewModelScope.launch {
+                try {
+                    chatRepository.deleteConversation(conversationId)
+
+                    titledConversations.remove(conversationId)
+
+                    // If deleted conversation is currently open
+                    if (_conversationId.value == conversationId) {
+                        _conversationId.value = null
+                        createOrLoadConversation()
+                    }
+
+                    Log.d("SITE", "Conversation deleted: $conversationId")
+
+                } catch (e: Exception) {
+                    Log.e("SITE", "Delete failed", e)
+                    _snackbarEvent.send(
+                        SnackbarEvent("Failed to delete conversation")
+                    )
+                }
+            }
+        }
+
+
     }
-
-
-
-
-
-}

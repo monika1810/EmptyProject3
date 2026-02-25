@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.presentation.auth
+package `in`.mercuryai.emptyproject.presentation.auth
 
 import android.content.Context
 import android.util.Log

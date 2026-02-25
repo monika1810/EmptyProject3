@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.presentation.component
+package `in`.mercuryai.emptyproject.presentation.component
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField

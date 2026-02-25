@@ -1,6 +1,8 @@
-package `in`.mercuryai.chat.presentation.util
+package `in`.mercuryai.emptyproject.presentation.util
+
+import android.content.res.Resources
 
 fun getScreenWidth(): Float {
-    return android.content.res.Resources.getSystem().displayMetrics.widthPixels /
-            android.content.res.Resources.getSystem().displayMetrics.density
+    return Resources.getSystem().displayMetrics.widthPixels /
+            Resources.getSystem().displayMetrics.density
 }

@@ -1,17 +1,14 @@
-package `in`.mercuryai.chat.data.repository
+package `in`.mercuryai.emptyproject.data.repository
 
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.room.FtsOptions
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.Conversation
-import `in`.mercuryai.chat.domain.repository.ChatRepository
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.Conversation
+import `in`.mercuryai.emptyproject.domain.repository.ChatRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
-import io.github.jan.supabase.postgrest.result.PostgrestResult
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.decodeRecord
@@ -20,12 +17,11 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
+import java.time.Instant
 import javax.inject.Inject
 import kotlin.collections.mapOf
 
@@ -44,7 +40,7 @@ class ChatRepositoryImpl @Inject constructor(
             .update(
                 mapOf(
                     "title" to title,
-                    "updated_at" to java.time.Instant.now().toString()
+                    "updated_at" to Instant.now().toString()
                 )
             ) {
                 filter { eq("id", conversationId) }
@@ -158,7 +154,7 @@ class ChatRepositoryImpl @Inject constructor(
 
 
     override suspend fun sendUserMessage(conversationId: String, text: String,imageUrl: String?) {
-        val nowIso = java.time.Instant.now().toString()
+        val nowIso = Instant.now().toString()
         supabase.from("messages").insert(
             mapOf(
                 "conversation_id" to conversationId,
@@ -189,8 +185,13 @@ class ChatRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveAiMessage(conversationId: String, text: String,imageUrl: String?) {
-        val nowIso = java.time.Instant.now().toString()
+    override suspend fun saveAiMessage(
+        conversationId: String,
+        text: String,
+        imageUrl: String?,
+        modelName: String?)
+    {
+        val nowIso = Instant.now().toString()
         supabase.from("messages").insert(
             mapOf(
                 "conversation_id" to conversationId,
@@ -205,7 +206,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun createConversation(userId: String): Conversation {
 
-        val nowIso = java.time.Instant.now().toString()
+        val nowIso = Instant.now().toString()
 
         return supabase
             .from("conversations")
@@ -226,7 +227,7 @@ class ChatRepositoryImpl @Inject constructor(
     suspend fun updateConversationTime(
         conversationId: String
     ) {
-        val nowIso = java.time.Instant.now().toString()
+        val nowIso = Instant.now().toString()
         supabase
             .from("conversations")
             .update(

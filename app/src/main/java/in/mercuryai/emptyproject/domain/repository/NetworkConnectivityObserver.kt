@@ -1,6 +1,6 @@
-package `in`.mercuryai.chat.domain.repository
+package `in`.mercuryai.emptyproject.domain.repository
 
-import `in`.mercuryai.chat.domain.model.NetworkStatus
+import `in`.mercuryai.emptyproject.domain.model.NetworkStatus
 import kotlinx.coroutines.flow.StateFlow
 
 interface NetworkConnectivityObserver {

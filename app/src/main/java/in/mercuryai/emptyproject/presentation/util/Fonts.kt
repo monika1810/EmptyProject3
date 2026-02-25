@@ -4,16 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
-import `in`.mercuryai.chat.R
+import `in`.mercuryai.emptyproject.R
 
 @Composable
 fun BebasNeueFont() = FontFamily(
-    Font(R.font.poppins_regular)
+    Font(R.font.bebas_neue_regular)
 )
 
 @Composable
 fun RobotoCondensedFont() = FontFamily(
-    Font(R.font.poppins_bold)
+    Font(R.font.roboto_condensed_medium)
 )
 
 object FontSize {

@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.presentation.component
+package `in`.mercuryai.emptyproject.presentation.component
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -35,7 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import `in`.mercuryai.chat.domain.model.Conversation
+import `in`.mercuryai.emptyproject.domain.model.Conversation
 
 @Composable
 fun HomeDrawer(

@@ -6,8 +6,8 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import `in`.mercuryai.chat.data.`object`.Constant
-import `in`.mercuryai.chat.domain.repository.AuthRepository
-import `in`.mercuryai.chat.presentation.auth.AuthResponse
+import `in`.mercuryai.emptyproject.domain.repository.AuthRepository
+import `in`.mercuryai.emptyproject.presentation.auth.AuthResponse
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.Google

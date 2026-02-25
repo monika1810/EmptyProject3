@@ -1,5 +1,6 @@
-package `in`.mercuryai.chat.data.repository
+package `in`.mercuryai.emptyproject.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
@@ -7,8 +8,8 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.util.Log
-import `in`.mercuryai.chat.domain.model.NetworkStatus
-import `in`.mercuryai.chat.domain.repository.NetworkConnectivityObserver
+import `in`.mercuryai.emptyproject.domain.model.NetworkStatus
+import `in`.mercuryai.emptyproject.domain.repository.NetworkConnectivityObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -35,8 +36,9 @@ class NetworkConnectivityObserverImpl(
     override val networkStatus: StateFlow<NetworkStatus> = _networkStatus
 
 
+    @SuppressLint("MissingPermission")
     private fun observer() : Flow<NetworkStatus> {
-        return callbackFlow {
+        return callbackFlow @androidx.annotation.RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE) {
             val connectivityCallback = object : NetworkCallback() {
 
                 override fun onAvailable(network: Network) {

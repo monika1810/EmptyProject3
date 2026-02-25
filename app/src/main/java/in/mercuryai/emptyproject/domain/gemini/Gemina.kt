@@ -1,27 +1,35 @@
-package `in`.mercuryai.chat.domain.gemini
+package `in`.mercuryai.emptyproject.domain.gemini
 
 //data class GeminiRequest(
 //    val contents: List<GeminiContent1>
 //)
 
-data class GeminiContent1(
-    val parts: List<GeminiPart>
+///
+
+
+data class GeminiResponse2(
+    val candidates: List<Candidate>?,
+    val usageMetadata: UsageMetadata?
 )
 
-data class GeminiResponse(
-    val candidates: List<GeminiCandidate>
+data class Candidate(
+    val content: ContentResponse?,
+    val finishReason: String?
 )
 
-data class GeminiCandidate(
-    val content: GeminiContentResponse
+data class ContentResponse(
+    val parts: List<PartResponse>?
 )
 
-data class GeminiContentResponse(
-    val parts: List<GeminiPartResponse>
+data class PartResponse(
+    val text: String?
 )
 
-data class GeminiPartResponse(
-    val text: String
+data class UsageMetadata(
+    val promptTokenCount: Int?,
+    val candidatesTokenCount: Int?,
+    val totalTokenCount: Int?
 )
+
 
 

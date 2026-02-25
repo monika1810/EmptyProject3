@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.presentation.home.components
+package `in`.mercuryai.emptyproject.presentation.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -47,14 +47,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.ChatMessageUi
+import `in`.mercuryai.emptyproject.domain.model.ChatMessage
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageUi
 import java.io.File
 
 
 @Composable
-fun MessageList(
+fun MessageList2(
     messages: List<ChatMessageUi>,
     modifier: Modifier = Modifier,
     listState: LazyListState,
@@ -63,8 +63,9 @@ fun MessageList(
     onCopy: (ChatMessageMain) -> Unit,
     onShare: (ChatMessageMain) -> Unit,
     onRegenerate: (ChatMessageMain) -> Unit,
-    onModelChange: (ChatMessageMain) -> Unit,
-    onListen: (ChatMessageMain) -> Unit
+    onModelChange: (String) -> Unit,
+    onListen: (ChatMessageMain) -> Unit,
+    selectedModel: String
 ) {
 
 
@@ -78,6 +79,7 @@ fun MessageList(
                 message = message.ui,
                 messageMain = message.main,
                 onCopy = onCopy,
+                selectedModel=selectedModel,
                 onLike = onLike,
                 onDislike = onDislike,
                 onShare = onShare,
@@ -98,12 +100,13 @@ fun MessageList(
 fun ChatBubble(
     message: ChatMessage,
     messageMain: ChatMessageMain,
+    selectedModel: String,
     onCopy: (ChatMessageMain) -> Unit,
     onLike: (ChatMessageMain) -> Unit,
     onDislike: (ChatMessageMain) -> Unit,
     onShare: (ChatMessageMain) -> Unit,
     onRegenerate: (ChatMessageMain) -> Unit,
-    onModelChange: (ChatMessageMain) -> Unit,
+    onModelChange: (String) -> Unit,
     onListen: (ChatMessageMain) -> Unit
 ) {
     val isUser = message.role == "user"
@@ -156,7 +159,9 @@ fun ChatBubble(
         // ⚡ ACTIONS (assistant only)
         if (!isUser) {
             MessageActionsRow(
+                message1 = message,
                 message = messageMain,
+                selectedModel=selectedModel,
                 onCopy = onCopy,
                 onLike = onLike,
                 onDislike = onDislike,
@@ -173,13 +178,15 @@ fun ChatBubble(
 
 @Composable
 fun MessageActionsRow(
+    message1: ChatMessage,
     message: ChatMessageMain,
+    selectedModel: String,
     onCopy: (ChatMessageMain) -> Unit,
     onLike: (ChatMessageMain) -> Unit,
     onDislike: (ChatMessageMain) -> Unit,
     onShare: (ChatMessageMain) -> Unit,
     onRegenerate: (ChatMessageMain) -> Unit,
-    onModelChange: (ChatMessageMain) -> Unit,
+    onModelChange: (String) -> Unit,
     onListen: (ChatMessageMain) -> Unit
 ) {
     Row(
@@ -226,7 +233,7 @@ fun MessageActionsRow(
         }
 
         Text(
-            text = "" ?: "GPT-4",
+            text =selectedModel ?: "GPT-4",
             fontSize = 12.sp,
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -314,7 +321,7 @@ fun ChatInputBar(
 }
 
 @Composable
-fun ChatInputBar(
+fun ChatInputBar2(
     modifier: Modifier = Modifier,
     onSend: (String) -> Unit,
     onSearchClick: () -> Unit

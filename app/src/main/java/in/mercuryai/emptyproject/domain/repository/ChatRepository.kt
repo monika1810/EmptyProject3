@@ -1,10 +1,9 @@
-package `in`.mercuryai.chat.domain.repository
+package `in`.mercuryai.emptyproject.domain.repository
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toUri
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.Conversation
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.Conversation
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 
@@ -56,7 +55,8 @@ interface ChatRepository {
     suspend fun saveAiMessage(
         conversationId: String,
         text: String,
-        imageUrl: String? = null
+        imageUrl: String? = null,
+        modelName:String?=null
     )
 
     suspend fun createConversation(userId: String): Conversation // 👈 NEW

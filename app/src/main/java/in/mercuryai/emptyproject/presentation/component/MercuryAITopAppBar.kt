@@ -1,26 +1,19 @@
-package `in`.mercuryai.chat.presentation.component
+package `in`.mercuryai.emptyproject.presentation.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -29,13 +22,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import `in`.mercuryai.chat.R
 import `in`.mercuryai.chat.presentation.util.BebasNeueFont
 import `in`.mercuryai.chat.presentation.util.CustomDrawerState
 import `in`.mercuryai.chat.presentation.util.FontSize
@@ -43,7 +34,7 @@ import `in`.mercuryai.chat.presentation.util.IconPrimary
 import `in`.mercuryai.chat.presentation.util.Surface
 import `in`.mercuryai.chat.presentation.util.SurfaceLighter
 import `in`.mercuryai.chat.presentation.util.TextPrimary
-import `in`.mercuryai.chat.presentation.util.getScreenWidth
+import `in`.mercuryai.emptyproject.presentation.util.getScreenWidth
 import `in`.mercuryai.chat.presentation.util.isOpened
 import `in`.mercuryai.chat.presentation.util.opposite
 

@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.data.`object`//object ApiUtilities {
+package `in`.mercuryai.emptyproject.data.`object`//object ApiUtilities {
 
 
 //    val headers = mapOf<String, String>(

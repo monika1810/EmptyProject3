@@ -1,10 +1,8 @@
-package `in`.mercuryai.chat.di
+package `in`.mercuryai.emptyproject.di
 
 
 import `in`.mercuryai.chat.data.`object`.Constant
-import `in`.mercuryai.chat.data.`object`.Constant.IMAGE_KEY
-import `in`.mercuryai.chat.data.remote.ImageApi
-import `in`.mercuryai.chat.data.remote.OpenAiApi
+import `in`.mercuryai.emptyproject.data.remote.ImageApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

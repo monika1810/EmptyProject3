@@ -1,12 +1,11 @@
 package `in`.mercuryai.chat.data.`object`
 
-import `in`.mercuryai.chat.domain.gemini.GeminiContent
-import `in`.mercuryai.chat.domain.gemini.GeminiContent1
-import `in`.mercuryai.chat.domain.gemini.GeminiPart
-import `in`.mercuryai.chat.domain.model.ChatMessage
-import `in`.mercuryai.chat.domain.model.ChatMessageMain
-import `in`.mercuryai.chat.domain.model.ChatMessageUi
-import `in`.mercuryai.chat.domain.model.Sender
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiContent
+import `in`.mercuryai.emptyproject.domain.gemini.GeminiPart
+import `in`.mercuryai.emptyproject.domain.model.ChatMessage
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageMain
+import `in`.mercuryai.emptyproject.domain.model.ChatMessageUi
+import `in`.mercuryai.emptyproject.domain.model.Sender
 import java.io.File
 import kotlin.io.encoding.Base64
 
@@ -17,7 +16,8 @@ object Constant {
 
  //  const val GEMINI_API_KEY = "AIzaSyCnoGqYC_YMqhA-OJmuWuzVeje6QpC_KIk"
 
-   const val GEMINI_API_KEY = "AIzaSyDGwcYFKew7G4Q18OR7XQL2eatY5bXVbXI"
+    const val GEMINI_API_KEY = "AIzaSyA7VwyMMXboSJ7k2ZNwLQTbAwywqK30NNo"
+  // const val GEMINI_API_KEY = "AIzaSyDGwcYFKew7G4Q18OR7XQL2eatY5bXVbXI"
 
     val IMAGE_API_KEY  ="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"
 

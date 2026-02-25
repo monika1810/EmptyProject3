@@ -1,4 +1,4 @@
-package `in`.mercuryai.chat.domain.model
+package `in`.mercuryai.emptyproject.domain.model
 
 sealed class NetworkStatus {
 

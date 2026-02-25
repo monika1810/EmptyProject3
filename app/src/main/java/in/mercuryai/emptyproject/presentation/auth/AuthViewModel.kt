@@ -1,20 +1,18 @@
-package `in`.mercuryai.chat.presentation.auth
+package `in`.mercuryai.emptyproject.presentation.auth
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import `in`.mercuryai.chat.domain.model.UserProfile
-import `in`.mercuryai.chat.domain.repository.AuthRepository
+import `in`.mercuryai.emptyproject.domain.model.UserProfile
+import `in`.mercuryai.emptyproject.domain.repository.AuthRepository
 import `in`.mercuryai.chat.presentation.util.SnackbarEvent
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.SessionStatus
 import io.github.jan.supabase.gotrue.auth
-import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
